@@ -17,12 +17,12 @@ mongoose.connect(config.mongoURI,{
 }).then(()=>console.log('MongoDB connect.....'))
 .catch(err => console.log(err))
 
-app.get('/',(req,res) => res.send('Hello Word! 안녕하세요 하하핳하ㅏ'))
+app.get('/',(req,res) => res.send('Hello Word! 안녕하세요 ㅎㅎ'))
 
 app.post('/register',(req,res)=>{
 
     const user = new User(req.body)
-
+    
     user.save((err,useInfo)=>{
         if(err) return res.json({success:false,err})
         return res.status(200).json({
