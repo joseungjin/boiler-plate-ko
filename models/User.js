@@ -45,6 +45,8 @@ userSchma.pre('save',function(next){
             next()
         })
     })
+    }else{
+        next()
     }
  
 })
