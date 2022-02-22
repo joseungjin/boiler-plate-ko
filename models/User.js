@@ -1,6 +1,7 @@
 const mongoose =require('mongoose')
 const bcrypt =require('bcrypt')
 const saltRounds = 10; 
+const jwt = require('jsonwebtoken');
 
 const userSchma =mongoose.Schema({
     name:{
@@ -50,6 +51,42 @@ userSchma.pre('save',function(next){
     }
  
 })
+
+userSchma.methods.comparePassword=function(planinPassword,cd){
+    //plainPassword 암호된 비밀번호 맞는지 확인
+    bcrypt.compare(planinPassword,this.password, function(err,isMatch){
+        if(err) return cb(err),
+        cb(null,isMatch)
+    })
+}
+
+userSchma.methods.generateToken = function(cb){
+
+    var user = this;
+
+    var token = jwt.sign(user._id.toHexString(),'secretToken');
+    user.token =token
+    user.save(function(err,user){
+        if(err) return cb(err)
+        cb(null,user)
+    })
+}
+
+userSchma.statics.findByToken = function(token,cb){
+    var user=this;
+
+    jwt.verify(token,'secreToken',function(err,decoded){
+        //유저 아이디를 이용해서 유저를 찾은 다음에
+        //클라이언트에서 가져온  token과 DB에 보관된 토큰일 일치하는 지 확인
+
+        user.findOne({"_id":jwt.decode,"token":token},function(err,user){
+            if(err) return cb(err);
+            cb(null,user)
+        })
+    })
+
+    jwt.verify(token,'shhhhh')
+}
 
 const User =mongoose.model('User',userSchma)
 
