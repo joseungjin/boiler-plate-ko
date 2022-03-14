@@ -6,7 +6,7 @@ const bodyParser=require('body-parser')
 const cookieParser= require('cookie-parser')
 const config = require('./config/key');
 const {User} =require("./models/User")
-const {auth} = require('./middleware/auth')
+const {auth}=require('./middleware/auth')
 
 app.use(bodyParser.urlencoded({extended:true}));
 
@@ -15,6 +15,7 @@ app.use(cookieParser());
 
 const mongoose =require('mongoose')
 const read = require('body-parser/lib/read')
+const req = require('express/lib/request')
 
 mongoose.connect(config.mongoURI,{
 }).then(()=>console.log('MongoDB connect.....'))
@@ -54,7 +55,7 @@ app.post('/api/users/login',(req,res)=>{
         if(err) return res.status(400).send(err);
 
         //토큰을 저장한다. 어디에 ? 쿠키, 로컬스토리지
-        res.cookie("X_auth",user.token)
+        res.cookie("x_auth",user.token)
         .status(200)
         .json({loginSuccess:true, userId:user._id}) 
     })
@@ -64,14 +65,25 @@ app.post('/api/users/login',(req,res)=>{
 
 app.get('/api/user/auth',auth,(req,res)=>{
     //미들웨어가 여기까지 통과해 왔다는 authentcation이 true라는 말
+    console.log(err)
     res.status(200).json({
         _id:req.user._id,
-        isAdmin:req.user.role===0?false:true,
+        isAdmin:req.user.role === 0? false:true,
         isAuth:true,
-        name:req.user.name,
+        name:req.user.name, 
         lastname:req.user.lastname,
         role:req.user.role,
         image:req.user.image
+    })
+})
+
+app.get('/api/users/logout',auth,(req,res)=> {
+    User.findOneAndUpdate({_id:req.user._id},
+        {token:""},(err,user)=>{
+        if(err) return res.json({success:false,err});
+        return res.status(200).send({
+            success:true
+        })
     })
 })
 app.listen(port,() => console.log('Example app listening on port',port,'!') )
