@@ -88,8 +88,6 @@ app.get('/api/users/logout',auth,(req,res)=> {
 })
 
 
-
-const port = 5000
+const port = 5001
 app.listen(port,() => console.log('Example app listening on port',port,'!') )
-
-
+//app.listen(port, () => console.log('Example app listening on port ${port}!'))
