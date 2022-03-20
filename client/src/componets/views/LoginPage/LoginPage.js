@@ -1,4 +1,4 @@
-import { Axios } from 'axios';
+import Axios  from 'axios';
 // import { response } from 'express';
 import React, {useState} from 'react'
 import { useDispatch } from 'react-redux'
