@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 function LandingPage() {
 
 
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const onClickHandler=()=>{
     axios.get('/api/users/logout')
     .then(response=>{
